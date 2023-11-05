@@ -96,6 +96,7 @@ class maxHeap<T extends Comparable<T>> {
 			else if (der >= tamaño || heap[izq].compareTo(heap[largest]) < 0){
 				prioridad = false; // Si no hay un hijo mas grande el ciclo termina.
 			}
+
 			if (i != largest) {
 				swap(heap, i, largest);
 			}
@@ -106,5 +107,5 @@ class maxHeap<T extends Comparable<T>> {
 		boolean res = (izq(i) < tamaño);
 		return res;
 	}
-
+	
 }

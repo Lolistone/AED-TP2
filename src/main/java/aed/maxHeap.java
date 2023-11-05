@@ -34,14 +34,15 @@ class maxHeap<T extends Comparable<T>> {
 		capacidad = array.length;
 		tamaño = capacidad;
 		heap = (T[]) new Comparable[capacidad];
-		heap = array;
+		heap = array; // O(n)
 		for (int i = (tamaño-1)/2; i>=0 ; i--) {
-			bajar(i);
+			bajar(i); // Floyd O(n)
 		}
 	}
 
-
+	// O(log n) mientras tenga lugar, en mi SistemaCNE ya conozco cuanto espacio necesito.
 	public void apilar(T elem) {
+		// Cuando me quedo sin capacidad duplico el tamaño O(n).
 		if (tamaño == capacidad) {
             T[] nuevoHeap = (T[]) new Comparable[tamaño*2];
             for (int i = 0; i < tamaño; i++) {
@@ -57,6 +58,7 @@ class maxHeap<T extends Comparable<T>> {
 		subir(i); // Restablezco el invariante.
 	}
 
+	// O(log n), pues recorre en el peor caso la altura.
 	private void subir(int i) {
 		while (i != 0 && heap[i].compareTo(heap[padre(i)]) > 0) {
 			swap(heap, i, padre(i));
@@ -89,7 +91,8 @@ class maxHeap<T extends Comparable<T>> {
 	private void bajar(int i) {
 		int largest = i;
 		boolean prioridad = true;
-
+		
+		// En el peor caso bajo desde la raiz a una hoja, O(log n)
 		while (esHoja(largest) && prioridad) {
 
 			i = largest;

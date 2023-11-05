@@ -119,17 +119,31 @@ class maxHeap<T extends Comparable<T>> {
 		return res;
 	}
 
-public static void main(String[] args) {
-		Integer[] arr;
-		arr = new Integer[]{1,4,5,3, 57777, 2, 6, 99, 7, 43, 45, 23, 777, 100000, 11, 12, 13, 5424, 543, 27};
-		maxHeap<Integer> mHeap = new maxHeap(arr); 
-        System.out.println(
-            "Array representation of Heap is:");
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("{");
+		for (int i = 0; i < this.tamaño-1; i++) {
+			sb.append(this.heap[i] + ",");
+		}
+		sb.append(this.heap[tamaño-1] + "}");
+		return sb.toString();
+	}
 
-        for (int i = 0; i < arr.length; ++i)
-            System.out.print(mHeap.desapilar() + " ");
- 
-        System.out.println();
+public static void main(String[] args) {
+		Tupla<Integer, Integer> t1 = new Tupla<Integer,Integer>(0, 200000);
+		Tupla<Integer, Integer> t2 = new Tupla<Integer,Integer>(1, 223544);
+		Tupla<Integer, Integer> t3 = new Tupla<Integer,Integer>(2, 333);
+		Tupla<Integer, Integer> t4 = new Tupla<Integer,Integer>(3, 2);
+		Tupla<Integer, Integer> t5 = new Tupla<Integer,Integer>(4, 435432);
+		Tupla<Integer, Integer> t6 = new Tupla<Integer,Integer>(5, 233);
+				
+		Tupla<Integer, Integer>[] arr;
+		arr = new Tupla[]{t1, t2, t3, t4, t5, t6};
+		maxHeap<Tupla<Integer, Integer>> mHeap = new maxHeap(arr); 
+        System.out.println(
+            "El arrayHeap es:");
+		System.out.print(mHeap.toString());
 }
 
 }

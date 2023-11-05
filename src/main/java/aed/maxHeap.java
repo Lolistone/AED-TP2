@@ -43,6 +43,10 @@ class maxHeap<T extends Comparable<T>> {
 		heap[i] = elem;
 		tamaño++;
 	
+		subir(i); // Restablezco el invariante.
+	}
+
+	private void subir(int i) {
 		while (i != 0 && heap[i].compareTo(heap[padre(i)]) > 0) {
 			swap(heap, i, padre(i));
 			i = padre(i);
@@ -66,53 +70,41 @@ class maxHeap<T extends Comparable<T>> {
 		T max = heap[0];
 		heap[0] = heap[tamaño - 1];
 		tamaño--;
-		maxHeapify(0); // Restablezco el invariante.
+		bajar(0); // Restablezco el invariante.
 
 		return max;
 	}
 
-	private void maxHeapify(int i) {
-		int izq = izq(i);
-		int der = der(i);
-
+	private void bajar(int i) {
 		int largest = i;
-		if (izq < tamaño && heap[izq].compareTo(heap[largest]) > 0) {
-			largest = izq;
-		}
-		if (der < tamaño && heap[der].compareTo(heap[largest]) > 0) {
-			largest = der;
-		}
+		boolean prioridad = true;
 
-		if (largest != i) {
-			swap(heap, i, largest);
-			maxHeapify(largest);
+		while (esHoja(largest) && prioridad) {
+
+			i = largest;
+			int izq = izq(largest);
+			int der = der(largest);
+
+			if (izq < tamaño && heap[izq].compareTo(heap[largest]) >= 0) {
+				largest = izq;
+			}
+
+			if (der < tamaño && heap[der].compareTo(heap[largest]) >= 0) {
+				largest = der;
+			}
+
+			else if (der >= tamaño || heap[izq].compareTo(heap[largest]) < 0){
+				prioridad = false; // Si no hay un hijo mas grande el ciclo termina.
+			}
+			if (i != largest) {
+				swap(heap, i, largest);
+			}
 		}
 	}
 
-}
-
-
-class maxHeapTest {
-	public static void main(String[] args) {
-		maxHeap<Tupla<Integer,Integer>> h = new maxHeap(11);
-        Tupla<Integer,Integer> t = new Tupla<Integer,Integer>(1, 2);
-        Tupla<Integer,Integer> t1 = new Tupla<Integer,Integer>(1, 25);
-        Tupla<Integer,Integer> t2 = new Tupla<Integer,Integer>(1, 5);
-        Tupla<Integer,Integer> t3 = new Tupla<Integer,Integer>(1, 1);
-        Tupla<Integer,Integer> t4 = new Tupla<Integer,Integer>(1, 9);
-
-		h.apilar(t);
-		h.apilar(t1);
-		h.apilar(t2);
-		h.apilar(t3);
-		h.apilar(t4);
-        h.apilar(new Tupla<Integer,Integer>(1, 400));
-		System.out.print(h.desapilar().toString() + " ");
-		System.out.print(h.desapilar().toString() + " ");
-		System.out.print(h.desapilar().toString() + " ");
-		System.out.print(h.desapilar().toString() + " ");
-		System.out.print(h.desapilar().toString() + " ");
-		System.out.print(h.desapilar().toString() + " ");
+	private boolean esHoja(int i) {
+		boolean res = (izq(i) < tamaño);
+		return res;
 	}
-}
 
+}

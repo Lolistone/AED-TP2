@@ -30,6 +30,17 @@ class maxHeap<T extends Comparable<T>> {
 		tamaño = 0;
 	}
 
+	public maxHeap(T[] array) {
+		capacidad = array.length;
+		tamaño = capacidad;
+		heap = (T[]) new Comparable[capacidad];
+		heap = array;
+		for (int i = (tamaño-1)/2; i>=0 ; i--) {
+			bajar(i);
+		}
+	}
+
+
 	public void apilar(T elem) {
 		if (tamaño == capacidad) {
             T[] nuevoHeap = (T[]) new Comparable[tamaño*2];
@@ -107,5 +118,18 @@ class maxHeap<T extends Comparable<T>> {
 		boolean res = (izq(i) < tamaño);
 		return res;
 	}
-	
+
+public static void main(String[] args) {
+		Integer[] arr;
+		arr = new Integer[]{1,4,5,3, 57777, 2, 6, 99, 7, 43, 45, 23, 777, 100000, 11, 12, 13, 5424, 543, 27};
+		maxHeap<Integer> mHeap = new maxHeap(arr); 
+        System.out.println(
+            "Array representation of Heap is:");
+
+        for (int i = 0; i < arr.length; ++i)
+            System.out.print(mHeap.desapilar() + " ");
+ 
+        System.out.println();
+}
+
 }

@@ -92,17 +92,26 @@ public class SistemaCNE {
 
     public void registrarMesa(int idMesa, VotosPartido[] actaMesa) {
         int idDistrito = buscarID(idMesa);
+
         if (!(_mesasRegistradas[idMesa])){
+
             Tupla<Integer, Integer>[] votosPartido = new Tupla[_nombresPartidos.length - 1];
             for(int j = 0; j < _votosDiputados[0].length; j++){
                 _votosDiputados[idDistrito][j] += actaMesa[j].votosDiputados();
                 _votosPresidenciales[j] += actaMesa[j].votosPresidente();
                 _votosTotales += actaMesa[j].votosPresidente();
+
                 if (j != _votosDiputados[0].length - 1) {
-                    votosPartido[j] = new Tupla<Integer,Integer>(j, votosDiputados(j, idDistrito));
+
+                    if (votosDiputados(j,idDistrito)*100/(_votosTotales+1)  > 3) {
+                        votosPartido[j] = new Tupla<Integer,Integer>(j, votosDiputados(j, idDistrito));
+                    }
+                    else {
+                        votosPartido[j] = new Tupla<Integer,Integer>(j, 0);                        
+                    }
                 }
             }
-            // VOTOS POR PARTIDO DEBE TENER PARTIDO QUE SUPERE EL UMBRAL (> 3%)
+
             _cocientesPorDistritos[idDistrito] = new maxHeap(votosPartido); 
             _mesasRegistradas[idMesa] = true;
             buscarMaximos();
@@ -134,39 +143,44 @@ public class SistemaCNE {
     }
 
     public boolean hayBallotage(){
-        int porcentajePrimero = (_primero/_votosTotales) * 100;
-        int porcentajeSegundo = (_segundo/_votosTotales) * 100;
+        double pjePrimero = porcentaje(_primero);
+        double pjeSegundo = porcentaje(_segundo);
         boolean res = true;
 
-        if(porcentajePrimero > 45){
+        if (pjePrimero >= 45){
             res = false;
-        } else if (porcentajePrimero > 40 && (porcentajePrimero - porcentajeSegundo) >= 10){
+        } else if (pjePrimero > 40 && (pjePrimero - pjeSegundo) >= 10){
             res = false;
         }
         return res;
     }
 
+    private double porcentaje(int idPartido) {
+        double res = (double)_votosPresidenciales[idPartido]/_votosTotales;
+        return res * 100;
+    }
+
     private void buscarMaximos(){
         if (_votosPresidenciales.length > 2){
             if (_votosPresidenciales[0] >= _votosPresidenciales[1]){
-                _primero = _votosPresidenciales[0];
-                _segundo = _votosPresidenciales[1];
+                _primero = 0;
+                _segundo = 1;
             } else {
-                _primero = _votosPresidenciales[1];
-                _segundo = _votosPresidenciales[0];
+                _primero = 1;
+                _segundo = 0;
             }
             if(_votosPresidenciales.length > 3)
                 for(int i = 2; i < _votosPresidenciales.length - 1; i++){
-                    if (_votosPresidenciales[i] > _primero){
+                    if (_votosPresidenciales[i] > _votosPresidenciales[_primero]){
                         _segundo = _primero;
-                        _primero = _votosPresidenciales[i];
-                    } else if (_votosPresidenciales[i] > _segundo){
-                        _segundo = _votosPresidenciales[i];
+                        _primero = i;
+                    } else if (_votosPresidenciales[i] > _votosPresidenciales[_segundo]){
+                        _segundo = i;
                     }
             }
         } else if (_votosPresidenciales.length == 2){
-            _primero = _votosPresidenciales[0];
-            _segundo = _votosPresidenciales[0];
+            _primero = 0;
+            _segundo = 0;
         } else {
             _primero = -1;
             _segundo = -1;

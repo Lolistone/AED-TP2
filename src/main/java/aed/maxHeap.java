@@ -122,6 +122,11 @@ class maxHeap<T extends Comparable<T>> {
 		return res;
 	}
 
+	public void modificarMaximo(T elem){
+		heap[0] = elem;
+		bajar(0);
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();

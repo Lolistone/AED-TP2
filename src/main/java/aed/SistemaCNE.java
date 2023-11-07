@@ -130,12 +130,12 @@ public class SistemaCNE {
     public int[] resultadosDiputados(int idDistrito){
         if (!_distritosComputado[idDistrito]){
             for (int i = 0; i < _diputadosPorDistrito[idDistrito]; i++) {
-                Tupla<Integer, Integer> max = _cocientesPorDistritos[idDistrito].desapilar();
-                _diputadosPorPartido[idDistrito][max.getKey()] += 1;
+                Tupla<Integer, Integer> max = _cocientesPorDistritos[idDistrito].max();
+                _diputadosPorPartido[idDistrito][max.getKey()]++;
                 int votos = votosDiputados(max.getKey(), idDistrito);
                 int escaños = _diputadosPorPartido[idDistrito][max.getKey()];
                 max.modValue(votos/(escaños+1));
-                _cocientesPorDistritos[idDistrito].apilar(max);
+                _cocientesPorDistritos[idDistrito].modificarMaximo(max);
                 _distritosComputado[idDistrito] = true;
             }
         }
@@ -149,9 +149,11 @@ public class SistemaCNE {
 
         if (pjePrimero >= 45){
             res = false;
-        } else if (pjePrimero > 40 && (pjePrimero - pjeSegundo) >= 10){
+        } 
+        else if (pjePrimero > 40 && (pjePrimero - pjeSegundo) >= 10){
             res = false;
         }
+
         return res;
     }
 
@@ -165,23 +167,28 @@ public class SistemaCNE {
             if (_votosPresidenciales[0] >= _votosPresidenciales[1]){
                 _primero = 0;
                 _segundo = 1;
-            } else {
+            } 
+            else {
                 _primero = 1;
                 _segundo = 0;
             }
-            if(_votosPresidenciales.length > 3)
+            if (_votosPresidenciales.length > 3) {
                 for(int i = 2; i < _votosPresidenciales.length - 1; i++){
                     if (_votosPresidenciales[i] > _votosPresidenciales[_primero]){
                         _segundo = _primero;
                         _primero = i;
-                    } else if (_votosPresidenciales[i] > _votosPresidenciales[_segundo]){
+                    } 
+                    else if (_votosPresidenciales[i] > _votosPresidenciales[_segundo]){
                         _segundo = i;
                     }
             }
-        } else if (_votosPresidenciales.length == 2){
+            }
+        } 
+        else if (_votosPresidenciales.length == 2) {
             _primero = 0;
             _segundo = 0;
-        } else {
+        } 
+        else {
             _primero = -1;
             _segundo = -1;
         }

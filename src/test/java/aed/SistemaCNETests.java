@@ -28,17 +28,17 @@ class SistemaCNETests {
     public SistemaCNE inicializarSistemaCNE(int cantDistritos, int cantPartidos, int mesasPorDistrito) {
         String[] nombresDistritos = new String[cantDistritos];
         int[] diputadosPorDistrito = new int[cantDistritos];
-        String[] nombresPartidos = new String[cantPartidos+1];
+        String[] nombresPartidos = new String[cantPartidos];
         int[] ultimasMesasDistritos = new int[cantDistritos];
         for (int i = 0; i < cantDistritos; i++) {
             nombresDistritos[i] =  "Distrito " + Integer.toString(i);
             diputadosPorDistrito[i] = (int) 1e6;
             ultimasMesasDistritos[i] = (i+1) * mesasPorDistrito;
         }
-        for (int i = 0; i < cantPartidos; i++) {
+        for (int i = 0; i < cantPartidos - 1; i++) {
             nombresPartidos[i] = "Partido " + Integer.toString(i);
         }
-        nombresPartidos[cantPartidos] = "Blanco";
+        nombresPartidos[cantPartidos - 1] = "Blanco";
         return new SistemaCNE(nombresDistritos, diputadosPorDistrito, nombresPartidos, ultimasMesasDistritos);
     }
 

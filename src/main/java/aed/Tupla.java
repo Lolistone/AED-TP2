@@ -19,6 +19,9 @@ public class Tupla<K, V extends Comparable<V>> implements Comparable<Tupla<K, V>
         return value;
     }
 
+    public void modValue(V newV){
+        value = newV;
+    }
     
     @Override
     public int compareTo(Tupla<K,V> t) {

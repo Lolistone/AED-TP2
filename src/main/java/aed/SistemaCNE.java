@@ -23,6 +23,7 @@ public class SistemaCNE {
     }
 
     public SistemaCNE(String[] nombresDistritos, int[] diputadosPorDistrito, String[] nombresPartidos, int[] ultimasMesasDistritos) {
+
         _nombresDistritos = nombresDistritos;
         _diputadosPorDistrito = diputadosPorDistrito;
         _nombresPartidos = nombresPartidos;
@@ -42,10 +43,7 @@ public class SistemaCNE {
             }
             _distritosComputado[i] = false;
         }
-        /*
-        for(int j= 0; j < nombresPartidos.length; j++){
-            _votosPresidenciales[j] = 0;
-        } */
+
     }
 
     public String nombrePartido(int idPartido) {
@@ -70,21 +68,29 @@ public class SistemaCNE {
         int fin = _rangoMesas.length - 1;
         int mid = 0;
         boolean encontrado = false;
+
         while (inicio <= fin && !(encontrado)){
             mid = inicio + (fin-inicio)/2;
             if (mid != 0){
+
                 if (_rangoMesas[mid - 1] <= idMesa && idMesa < _rangoMesas[mid]){
                     encontrado = true;
-                } else if (idMesa < _rangoMesas[mid - 1]){
+                } 
+                else if (idMesa < _rangoMesas[mid - 1]){
                     fin = mid - 1;
-                } else if (idMesa >= _rangoMesas[mid]){
+                } 
+                else if (idMesa >= _rangoMesas[mid]){
                     inicio = mid + 1;
                 }
-            } else {
+
+            } 
+            else {
+
                 if (idMesa >= _rangoMesas[mid]){
                     mid++;
                 }
                 encontrado = true;
+
             }              
         }
         return mid;
@@ -112,7 +118,8 @@ public class SistemaCNE {
                 }
             }
 
-            _cocientesPorDistritos[idDistrito] = new maxHeap(votosPartido); 
+            _cocientesPorDistritos[idDistrito] = new maxHeap(votosPartido);
+            _distritosComputado[idDistrito] = false;
             _mesasRegistradas[idMesa] = true;
             buscarMaximos();
 
@@ -164,6 +171,7 @@ public class SistemaCNE {
 
     private void buscarMaximos(){
         if (_votosPresidenciales.length > 2){
+
             if (_votosPresidenciales[0] >= _votosPresidenciales[1]){
                 _primero = 0;
                 _segundo = 1;
@@ -172,7 +180,9 @@ public class SistemaCNE {
                 _primero = 1;
                 _segundo = 0;
             }
+
             if (_votosPresidenciales.length > 3) {
+
                 for(int i = 2; i < _votosPresidenciales.length - 1; i++){
                     if (_votosPresidenciales[i] > _votosPresidenciales[_primero]){
                         _segundo = _primero;
@@ -181,17 +191,21 @@ public class SistemaCNE {
                     else if (_votosPresidenciales[i] > _votosPresidenciales[_segundo]){
                         _segundo = i;
                     }
+                }
+
             }
-            }
-        } 
+        }
+
         else if (_votosPresidenciales.length == 2) {
             _primero = 0;
             _segundo = 0;
         } 
+
         else {
             _primero = -1;
             _segundo = -1;
         }
+        
     }
 }
 

@@ -14,6 +14,8 @@ public class SistemaCNE {
     private int _segundo;
     private int _votosTotales;
 
+    // InvRep : 
+
     public class VotosPartido{
         private int presidente;
         private int diputados;
@@ -34,6 +36,8 @@ public class SistemaCNE {
         _votosDiputados = new int[nombresDistritos.length][nombresPartidos.length];
         _distritosComputado = new boolean[nombresDistritos.length];
         _cocientesPorDistritos = new maxHeap[nombresDistritos.length];
+        _primero = -1;
+        _segundo = -1;
 
         for(int i = 0; i < diputadosPorDistrito.length; i++){
             for(int j= 0; j < nombresPartidos.length; j++){
@@ -136,23 +140,28 @@ public class SistemaCNE {
 
     public int[] resultadosDiputados(int idDistrito){
         if (!_distritosComputado[idDistrito]){
+
             for (int i = 0; i < _diputadosPorDistrito[idDistrito]; i++) {
                 Tupla<Integer, Integer> max = _cocientesPorDistritos[idDistrito].max();
-                _diputadosPorPartido[idDistrito][max.getKey()]++;
+                _diputadosPorPartido[idDistrito][max.getKey()]++; // Sumo un escaño al partido;
+
                 int votos = votosDiputados(max.getKey(), idDistrito);
                 int escaños = _diputadosPorPartido[idDistrito][max.getKey()];
-                max.modValue(votos/(escaños+1));
-                _cocientesPorDistritos[idDistrito].modificarMaximo(max);
-                _distritosComputado[idDistrito] = true;
+                max.modValue(votos/(escaños+1)); // Calculo el cociente segun dHont; 
+
+                _cocientesPorDistritos[idDistrito].modificarMaximo(max); // modifico el maximo y reestablezco el heap. 
+                _distritosComputado[idDistrito] = true; // Va a ser True mientras no se registre una nueva mesa.
             }
         }
+
         return _diputadosPorPartido[idDistrito];  
     }
 
     public boolean hayBallotage(){
+        
+        boolean res = true;
         double pjePrimero = porcentaje(_primero);
         double pjeSegundo = porcentaje(_segundo);
-        boolean res = true;
 
         if (pjePrimero >= 45){
             res = false;
@@ -201,11 +210,6 @@ public class SistemaCNE {
             _segundo = 0;
         } 
 
-        else {
-            _primero = -1;
-            _segundo = -1;
-        }
-        
     }
 }
 

@@ -8,8 +8,8 @@ public class SistemaCNE {
     private int[][] _diputadosPorPartido;
     private int[] _votosPresidenciales;
     private int[][] _votosDiputados;
-    private boolean[] _distritosComputado;
-    private boolean[] _mesasRegistradas;
+    private BSBV _distritosComputado;
+    private BSBV _mesasRegistradas;
     private int _primero;
     private int _segundo;
     private int _votosTotales;
@@ -30,14 +30,20 @@ public class SistemaCNE {
         _diputadosPorDistrito = diputadosPorDistrito;
         _nombresPartidos = nombresPartidos;
         _rangoMesas = ultimasMesasDistritos;
-        _mesasRegistradas = new boolean[ultimasMesasDistritos[ultimasMesasDistritos.length - 1]];
+
         _diputadosPorPartido = new int[nombresDistritos.length][nombresPartidos.length];
+        // Guardo #Votos de cada partido;
         _votosPresidenciales = new int[nombresPartidos.length];
         _votosDiputados = new int[nombresDistritos.length][nombresPartidos.length];
-        _distritosComputado = new boolean[nombresDistritos.length];
+        // Guardo los distritos "computados". Es decir, cada vez que calculo los diputados
+        // en un distrito este va a figurar como computado hasta que una nueva mesa se registre;
+        _distritosComputado = new BSBV(nombresDistritos.length);
+        _mesasRegistradas = new BSBV(ultimasMesasDistritos[ultimasMesasDistritos.length - 1]);
         _cocientesPorDistritos = new maxHeap[nombresDistritos.length];
+
         _primero = -1;
         _segundo = -1;
+        _votosTotales = 0;
 
         for(int i = 0; i < diputadosPorDistrito.length; i++){
             for(int j= 0; j < nombresPartidos.length; j++){
@@ -45,9 +51,7 @@ public class SistemaCNE {
                 _votosDiputados[i][j] = 0;
                 _votosPresidenciales[j] = 0;
             }
-            _distritosComputado[i] = false;
         }
-
     }
 
     public String nombrePartido(int idPartido) {
@@ -103,7 +107,7 @@ public class SistemaCNE {
     public void registrarMesa(int idMesa, VotosPartido[] actaMesa) {
         int idDistrito = buscarID(idMesa);
 
-        if (!(_mesasRegistradas[idMesa])){
+        if (!(_mesasRegistradas.pertence(idMesa))){
 
             Tupla<Integer, Integer>[] votosPartido = new Tupla[_nombresPartidos.length - 1];
             for(int j = 0; j < _votosDiputados[0].length; j++){
@@ -113,7 +117,7 @@ public class SistemaCNE {
 
                 if (j != _votosDiputados[0].length - 1) {
 
-                    if (votosDiputados(j,idDistrito)*100/(_votosTotales+1)  > 3) {
+                    if (_votosTotales != 0 && votosDiputados(j,idDistrito)*100/(_votosTotales)  > 3) {
                         votosPartido[j] = new Tupla<Integer,Integer>(j, votosDiputados(j, idDistrito));
                     }
                     else {
@@ -123,8 +127,8 @@ public class SistemaCNE {
             }
 
             _cocientesPorDistritos[idDistrito] = new maxHeap(votosPartido);
-            _distritosComputado[idDistrito] = false;
-            _mesasRegistradas[idMesa] = true;
+            _distritosComputado.eliminar(idDistrito);
+            _mesasRegistradas.agregar(idDistrito);
             buscarMaximos();
 
         }
@@ -139,7 +143,7 @@ public class SistemaCNE {
     }
 
     public int[] resultadosDiputados(int idDistrito){
-        if (!_distritosComputado[idDistrito]){
+        if (!_distritosComputado.pertence(idDistrito)){
 
             for (int i = 0; i < _diputadosPorDistrito[idDistrito]; i++) {
                 Tupla<Integer, Integer> max = _cocientesPorDistritos[idDistrito].max();
@@ -150,7 +154,7 @@ public class SistemaCNE {
                 max.modValue(votos/(escaños+1)); // Calculo el cociente segun dHont; 
 
                 _cocientesPorDistritos[idDistrito].modificarMaximo(max); // modifico el maximo y reestablezco el heap. 
-                _distritosComputado[idDistrito] = true; // Va a ser True mientras no se registre una nueva mesa.
+                _distritosComputado.agregar(idDistrito);; // Va a ser True mientras no se registre una nueva mesa.
             }
         }
 

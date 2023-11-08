@@ -158,10 +158,24 @@ public class SistemaCNE {
     }
 
     public boolean hayBallotage(){
-        
         boolean res = true;
-        double pjePrimero = porcentaje(_primero);
-        double pjeSegundo = porcentaje(_segundo);
+        double pjePrimero;
+        double pjeSegundo;
+
+        if (_primero != -1 && _segundo != -1) {
+            pjePrimero = porcentaje(_primero);
+            pjeSegundo = porcentaje(_segundo);
+        }
+
+        else if (_primero != -1 && _segundo == -1) {
+            pjePrimero = porcentaje(_primero); 
+            pjeSegundo = 0;            
+        }
+        // Si no hay partidos segun la especificacion hay ballotage
+        else {
+            return res;
+        }
+
 
         if (pjePrimero >= 45){
             res = false;

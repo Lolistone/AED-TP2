@@ -139,7 +139,7 @@ public class SistemaCNE {
                 }
             }
 
-            _cocientesPorDistritos[idDistrito] = new maxHeap(votosPartido);
+            _cocientesPorDistritos[idDistrito] = new maxHeap(votosPartido, i);
             _distritosComputado.eliminar(idDistrito);
             _mesasRegistradas.agregar(idDistrito);
             buscarMaximos();

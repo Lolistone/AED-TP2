@@ -110,23 +110,21 @@ public class SistemaCNE {
         if (!(_mesasRegistradas.pertence(idMesa))){
 
             Tupla<Integer, Integer>[] votosPartido = new Tupla[_nombresPartidos.length - 1];
+            int i = 0;
             for(int j = 0; j < _votosDiputados[0].length; j++){
                 _votosDiputados[idDistrito][j] += actaMesa[j].votosDiputados();
                 _votosPresidenciales[j] += actaMesa[j].votosPresidente();
                 _votosTotales += actaMesa[j].votosPresidente();
 
                 if (j != _votosDiputados[0].length - 1) {
-
                     if (_votosTotales != 0 && votosDiputados(j,idDistrito)*100/(_votosTotales)  > 3) {
-                        votosPartido[j] = new Tupla<Integer,Integer>(j, votosDiputados(j, idDistrito));
-                    }
-                    else {
-                        votosPartido[j] = new Tupla<Integer,Integer>(j, 0);                        
+                        votosPartido[i] = new Tupla<Integer,Integer>(j, votosDiputados(j, idDistrito));
+                        i++;
                     }
                 }
             }
 
-            _cocientesPorDistritos[idDistrito] = new maxHeap(votosPartido);
+            _cocientesPorDistritos[idDistrito] = new maxHeap(votosPartido, i);
             _distritosComputado.eliminar(idDistrito);
             _mesasRegistradas.agregar(idDistrito);
             buscarMaximos();
@@ -143,7 +141,7 @@ public class SistemaCNE {
     }
 
     public int[] resultadosDiputados(int idDistrito){
-        if (!_distritosComputado.pertence(idDistrito)){
+        if (!_distritosComputado.pertence(idDistrito) && _cocientesPorDistritos[idDistrito].max() != null){
 
             for (int i = 0; i < _diputadosPorDistrito[idDistrito]; i++) {
                 Tupla<Integer, Integer> max = _cocientesPorDistritos[idDistrito].max();
@@ -154,7 +152,7 @@ public class SistemaCNE {
                 max.modValue(votos/(escaños+1)); // Calculo el cociente segun dHont; 
 
                 _cocientesPorDistritos[idDistrito].modificarMaximo(max); // modifico el maximo y reestablezco el heap. 
-                _distritosComputado.agregar(idDistrito);; // Va a ser True mientras no se registre una nueva mesa.
+                _distritosComputado.agregar(idDistrito); // Va a ser True mientras no se registre una nueva mesa.
             }
         }
 

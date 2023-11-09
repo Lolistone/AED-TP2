@@ -5,7 +5,8 @@ class maxHeap<T extends Comparable<T>> {
 	private T[] heap;
 	private int capacidad;
 	private int tamaño;
-	
+
+	// O(1)
 	private void swap(T[] array, int a, int b) {
 		T elem = array[a];
 		array[a] = array[b];
@@ -24,12 +25,14 @@ class maxHeap<T extends Comparable<T>> {
 		return 2 * i + 2;
 	}
 	
+	//O(n)
 	public maxHeap(int n) {
 		capacidad = n;
 		heap = (T[]) new Comparable[capacidad];
 		tamaño = 0;
 	}
 
+	// O(n) 2n en realidad, un poco ineficiente pues le paso un array con posiciones basura.
 	public maxHeap(T[] array) {
 
 		int i = 0;

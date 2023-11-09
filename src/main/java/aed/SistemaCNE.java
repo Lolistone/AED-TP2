@@ -23,9 +23,11 @@ public class SistemaCNE {
         public int votosPresidente(){return presidente;}
         public int votosDiputados(){return diputados;}
     }
-
+    
+    // O(P + D + P*D) = O(P*D)
     public SistemaCNE(String[] nombresDistritos, int[] diputadosPorDistrito, String[] nombresPartidos, int[] ultimasMesasDistritos) {
 
+        // Las siguientes son O(p) u O(D)
         _nombresDistritos = nombresDistritos;
         _diputadosPorDistrito = diputadosPorDistrito;
         _nombresPartidos = nombresPartidos;
@@ -45,13 +47,17 @@ public class SistemaCNE {
         _segundo = -1;
         _votosTotales = 0;
 
+        // O(D * P)
         for(int i = 0; i < diputadosPorDistrito.length; i++){
             for(int j= 0; j < nombresPartidos.length; j++){
                 _diputadosPorPartido[i][j] = 0;
                 _votosDiputados[i][j] = 0;
-                _votosPresidenciales[j] = 0;
             }
         }
+        // O(p)
+        for(int j= 0; j < nombresPartidos.length; j++){
+            _votosPresidenciales[j] = 0;
+        }        
     }
 
     public String nombrePartido(int idPartido) {
@@ -71,6 +77,7 @@ public class SistemaCNE {
         return nombreDistrito(idDistrito);
     }
 
+    // Busqueda binaria es O(log p)
     private int buscarID(int idMesa){
         int inicio = 0;
         int fin = _rangoMesas.length - 1;
@@ -104,22 +111,28 @@ public class SistemaCNE {
         return mid;
     } 
 
+    // O(log D + P) peor caso
     public void registrarMesa(int idMesa, VotosPartido[] actaMesa) {
 
-        int idDistrito = buscarID(idMesa);
+        int idDistrito = buscarID(idMesa); // busqueda binaria O(log D)
 
         if (!(_mesasRegistradas.pertence(idMesa))){
-
-            Tupla<Integer, Integer>[] votosPartido = new Tupla[_nombresPartidos.length - 1];
+            
+            Tupla<Integer, Integer>[] votosPartido = new Tupla[_nombresPartidos.length - 1]; // O(p)
             int i = 0;
+
             for(int j = 0; j < _votosDiputados[0].length; j++){
-                _votosDiputados[idDistrito][j] += actaMesa[j].votosDiputados();
+
+                // Las siguientes operaciones son O(1)
+                _votosDiputados[idDistrito][j] += actaMesa[j].votosDiputados(); 
                 _votosPresidenciales[j] += actaMesa[j].votosPresidente();
                 _votosTotales += actaMesa[j].votosPresidente();
                 
                 //Guardo en el heap solo a quienes superaron el umbral.
                 if (j != _votosDiputados[0].length - 1) {
                     if (_votosTotales != 0 && votosDiputados(j,idDistrito)*100/(_votosTotales) > 3) {
+                        
+                        // Crear una tupla es O(1) y asignar también
                         votosPartido[i] = new Tupla<Integer,Integer>(j, votosDiputados(j, idDistrito));
                         i++;
                     }
@@ -142,18 +155,26 @@ public class SistemaCNE {
         return _votosDiputados[idDistrito][idPartido];
     }
 
+    //O(D_d * log p)
     public int[] resultadosDiputados(int idDistrito){
+
+        // O(1) el pertenece del BSBV es cte y ver el maximo del heap también.
         if (!_distritosComputado.pertence(idDistrito) && _cocientesPorDistritos[idDistrito].max() != null){
 
-            for (int i = 0; i < _diputadosPorDistrito[idDistrito]; i++) {
+            for (int i = 0; i < _diputadosPorDistrito[idDistrito]; i++) { //Itero D_d veces
+
+                // O(1)
                 Tupla<Integer, Integer> max = _cocientesPorDistritos[idDistrito].max();
                 _diputadosPorPartido[idDistrito][max.getKey()]++; // Sumo un escaño al partido;
 
+                // O(1)
                 int votos = votosDiputados(max.getKey(), idDistrito);
                 int escaños = _diputadosPorPartido[idDistrito][max.getKey()];
-                max.modValue(votos/(escaños+1)); // Calculo el cociente segun dHont; 
+                max.modValue(votos/(escaños+1));
 
+                // O(log p) en el peor caso. Modifico el maximo y baja "toda una rama".
                 _cocientesPorDistritos[idDistrito].modificarMaximo(max); // modifico el maximo y reestablezco el heap. 
+                // O(1) asignación.
                 _distritosComputado.agregar(idDistrito); // Va a ser True mientras no se registre una nueva mesa.
             }
         }
@@ -161,10 +182,13 @@ public class SistemaCNE {
         return _diputadosPorPartido[idDistrito];  
     }
 
+
     public boolean hayBallotage(){
         boolean res = true;
         double pjePrimero;
         double pjeSegundo;
+
+        // Unicamente hay comparaciones O(1);
 
         if (_primero != -1 && _segundo != -1) {
             pjePrimero = porcentaje(_primero);
@@ -196,6 +220,7 @@ public class SistemaCNE {
         return res * 100;
     }
 
+    // En el peor caso es de O(p) pues recorre todo el array;
     private void buscarMaximos(){
         if (_votosPresidenciales.length > 2){
 

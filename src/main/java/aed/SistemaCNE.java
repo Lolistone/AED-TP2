@@ -105,6 +105,7 @@ public class SistemaCNE {
     } 
 
     public void registrarMesa(int idMesa, VotosPartido[] actaMesa) {
+
         int idDistrito = buscarID(idMesa);
 
         if (!(_mesasRegistradas.pertence(idMesa))){

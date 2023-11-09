@@ -30,12 +30,14 @@ class maxHeap<T extends Comparable<T>> {
 		tamaño = 0;
 	}
 
-	public maxHeap(T[] array, int j) {
-		capacidad = array.length;
-		tamaño = j;
+	public maxHeap(T[] array) {
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] != null) {capacidad++;}
+		}
+		tamaño = capacidad;
 		heap = (T[]) new Comparable[capacidad];
 		heap = array; // O(n)
-		for (int i = (j-1)/2; i>=0 ; i--) {
+		for (int i = (tamaño-1)/2; i>=0 ; i--) {
 			bajar(i); // Floyd O(n)
 		}
 	}

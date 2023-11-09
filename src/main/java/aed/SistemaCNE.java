@@ -115,16 +115,17 @@ public class SistemaCNE {
                 _votosDiputados[idDistrito][j] += actaMesa[j].votosDiputados();
                 _votosPresidenciales[j] += actaMesa[j].votosPresidente();
                 _votosTotales += actaMesa[j].votosPresidente();
-
+                
+                //Guardo en el heap solo a quienes superaron el umbral.
                 if (j != _votosDiputados[0].length - 1) {
-                    if (_votosTotales != 0 && votosDiputados(j,idDistrito)*100/(_votosTotales)  > 3) {
+                    if (_votosTotales != 0 && votosDiputados(j,idDistrito)*100/(_votosTotales) > 3) {
                         votosPartido[i] = new Tupla<Integer,Integer>(j, votosDiputados(j, idDistrito));
                         i++;
                     }
                 }
             }
 
-            _cocientesPorDistritos[idDistrito] = new maxHeap(votosPartido, i);
+            _cocientesPorDistritos[idDistrito] = new maxHeap(votosPartido);
             _distritosComputado.eliminar(idDistrito);
             _mesasRegistradas.agregar(idDistrito);
             buscarMaximos();

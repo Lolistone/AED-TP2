@@ -5,6 +5,12 @@ class maxHeap<T extends Comparable<T>> {
 	private T[] heap;
 	private int capacidad;
 	private int tamaño;
+	
+	/*
+	InvRep : tamaño <= capacidad y capacidad = |heap| yLuego
+	para todo i: int, si 0 <= i < |tamaño| entonces luego ((2*i+1 <= tamaño entonces luego heap[i] >= heap[2*i + 1]) y (2*i + 2 <= tamaño entonces luego heap[i] >= heap[2*i + 2]))
+	y debe estar perfectamente balanceado, es decir, que ninguna posicion del array menor a tamaño sea nula.
+	*/
 
 	// O(1)
 	private void swap(T[] array, int a, int b) {

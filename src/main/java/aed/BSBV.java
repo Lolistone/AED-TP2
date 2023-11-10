@@ -4,6 +4,10 @@ public class BSBV {
     private boolean[] arr;
     private int tamaño;
     
+    /*
+    InvRep: tamaño <= |arr|
+    */
+    
     public BSBV(int n) {
         tamaño = 0;
         arr = new boolean[n];

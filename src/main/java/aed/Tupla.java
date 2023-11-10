@@ -5,6 +5,8 @@ public class Tupla<K, V extends Comparable<V>> implements Comparable<Tupla<K, V>
 
     private K key;
     private V value;
+    
+    // InvRep: true
 
     public Tupla(K k, V v){
         key = k;

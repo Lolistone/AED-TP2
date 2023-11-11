@@ -26,7 +26,7 @@ public class SistemaCNE {
     en _votosPresidenciales todos los elementos son mayores o iguales a cero. 
     */
     
-    private maxHeap<Tupla<Integer, Integer>>[] _cocientesPorDistritos;       
+    private maxHeap<Tupla<Integer, Double>>[] _cocientesPorDistritos;       
     private BSBV _distritosComputados;
     private BSBV _mesasRegistradas;
     
@@ -191,7 +191,7 @@ public class SistemaCNE {
 
         if (!(_mesasRegistradas.pertence(idMesa))){
             
-            Tupla<Integer, Integer>[] votosPartido = new Tupla[_nombresPartidos.length - 1]; // O(p)
+            Tupla<Integer, Double>[] votosPartido = new Tupla[_nombresPartidos.length - 1]; // O(p)
             int i = 0;
 
             for(int j = 0; j < _votosDiputados[0].length; j++){
@@ -206,7 +206,7 @@ public class SistemaCNE {
                     if (_votosTotales != 0 && votosDiputados(j,idDistrito)*100/(_votosTotales) > 3) {
                         
                         // Crear una tupla es O(1) y asignar también
-                        votosPartido[i] = new Tupla<Integer,Integer>(j, votosDiputados(j, idDistrito));
+                        votosPartido[i] = new Tupla<Integer,Double>(j, (double)votosDiputados(j, idDistrito));
                         i++;
                     }
                 }
@@ -237,13 +237,13 @@ public class SistemaCNE {
             for (int i = 0; i < _diputadosPorDistrito[idDistrito]; i++) { //Itero D_d veces
 
                 // O(1)
-                Tupla<Integer, Integer> max = _cocientesPorDistritos[idDistrito].max();
+                Tupla<Integer, Double> max = _cocientesPorDistritos[idDistrito].max();
                 _diputadosPorPartido[idDistrito][max.getKey()]++; // Sumo un escaño al partido;
 
                 // O(1)
                 int votos = votosDiputados(max.getKey(), idDistrito);
                 int escaños = _diputadosPorPartido[idDistrito][max.getKey()];
-                max.modValue(votos/(escaños+1));
+                max.modValue((double)votos/(escaños+1));
 
                 // O(log p) en el peor caso. Modifico el maximo y baja "toda una rama".
                 _cocientesPorDistritos[idDistrito].modificarMaximo(max); // modifico el maximo y reestablezco el heap. 
